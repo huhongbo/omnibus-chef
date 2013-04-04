@@ -16,7 +16,7 @@
 #
 
 name "erchef"
-version "1.2.6"
+version "sf/R16"
 
 dependencies ["erlang", "rsync", "curl"]
 
