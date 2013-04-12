@@ -58,6 +58,7 @@ deps << "graylog2-webui"
 deps << "mongodb"
 
 #mcollective services
+deps << "stomp"
 deps << "mcollective"
 
 # integration testing

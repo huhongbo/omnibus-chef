@@ -1,0 +1,6 @@
+#!/bin/sh
+
+cd /opt/chef-server/embedded/service/graylog2-webui
+
+exec 2>&1
+exec chpst -P -U <%= node['chef_server']['user']['username1'] %> -u <%= node['chef_server']['user']['username1'] %> /usr/bin/env HOME="<%= node['chef_server']['graylog2-webui']['dir'] %>" /opt/chef-server/embedded/bin/bundle exec unicorn -E <%= node['chef_server']['graylog2-webui']['environment'] %> -c <%= File.join(node['chef_server']['graylog2-webui']['dir'], "etc", "unicorn.rb") %> /opt/chef-server/embedded/service/graylog2-webui/config.ru

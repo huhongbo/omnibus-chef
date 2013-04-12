@@ -15,23 +15,7 @@
 # limitations under the License.
 #
 
-# Create a user for Chef services to run as
-user node['chef_server']['user']['username'] do
-  system true
-  shell node['chef_server']['user']['shell']
-  home node['chef_server']['user']['home']
+runit_service "redis" do
+  action :disable
 end
 
-group node['chef_server']['user']['username'] do
-  members [node['chef_server']['user']['username']]
-end
-
-user node['chef_server']['user']['username1'] do
-  system true
-  shell node['chef_server']['user']['shell1']
-  home node['chef_server']['user']['home1']
-end
-
-group node['chef_server']['user']['username1'] do
-  members [node['chef_server']['user']['username1']]
-end

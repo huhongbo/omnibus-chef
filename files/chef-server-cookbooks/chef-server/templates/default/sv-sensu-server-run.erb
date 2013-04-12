@@ -1,0 +1,27 @@
+#!/bin/bash
+
+EMBEDDED_RUBY=true
+CONFIG_FILE=/etc/sensu/config.json
+CONFIG_DIR=/etc/sensu/conf.d
+EXTENSION_DIR=/etc/sensu/extensions
+PLUGINS_DIR=/etc/sensu/plugins
+HANDLERS_DIR=/etc/sensu/handlers
+LOG_DIR= <%= default['chef_server']['sensu']['log_directory'] %>
+
+if [ -f /etc/default/sensu ]; then
+    . /etc/default/sensu
+fi
+
+prog="sensu-server"
+options="-c $CONFIG_FILE -d $CONFIG_DIR -e $EXTENSION_DIR -l $LOG_DIR/$prog.log $OPTIONS"
+
+# $ORIGINAL_PATH is set by sensu-runsvdir
+if [ "x$EMBEDDED_RUBY" = "xtrue" ]; then
+    export PATH=/opt/chef-server/embedded/bin:$ORIGINAL_PATH:$PLUGINS_DIR:$HANDLERS_DIR
+    export GEM_PATH=/opt/chef-server/embedded/lib/ruby/gems/1.9.1:$GEM_PATH
+else
+    export PATH=$ORIGINAL_PATH:$PLUGINS_DIR:$HANDLERS_DIR
+fi
+
+exec 2>&1
+exec chpst -U <%= node['chef_server']['user']['username1'] %> -u <%= node['chef_server']['user']['username1'] %> /opt/chef-server/embedded/bin/$prog $options

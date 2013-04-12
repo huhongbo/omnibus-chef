@@ -89,9 +89,35 @@ if node['chef_server']['bootstrap']['enable']
     end
   end
 
+  [ node['chef_server']['rabbitmq']['vhost1'] ].each do |vhost|
+    execute "/opt/chef-server/embedded/bin/rabbitmqctl add_vhost #{vhost1}" do
+      user node['chef_server']['user']['username']
+      not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl list_vhosts| grep #{vhost1}"
+      retries 20
+    end
+  end
+
+  execute "/opt/chef-server/embedded/bin/rabbitmqctl add_user #{node['chef_server']['mcollective']['stomp']['username']} #{node['chef_server']['mcollective']['stomp']['password']}" do
+    not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl list_users |grep #{node['chef_server']['mcollective']['stomp']['username']}"
+    user node['chef_server']['user']['username']
+    retries 10
+  end
+
+  execute "/opt/chef-server/embedded/service/rabbitmq/sbin/rabbitmq-plugins enable rabbitmq_stomp" do
+    user node['chef_server']['user']['username']
+    retries 10
+  end
+
   # create chef user for the queue
   execute "/opt/chef-server/embedded/bin/rabbitmqctl add_user #{node['chef_server']['rabbitmq']['user']} #{node['chef_server']['rabbitmq']['password']}" do
     not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl list_users |grep #{node['chef_server']['rabbitmq']['user']}"
+    user node['chef_server']['user']['username']
+    retries 10
+  end
+
+  # create chef user for the queue
+  execute "/opt/chef-server/embedded/bin/rabbitmqctl add_user #{node['chef_server']['rabbitmq']['user1']} #{node['chef_server']['rabbitmq']['password1']}" do
+    not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl list_users |grep #{node['chef_server']['rabbitmq']['user1']}"
     user node['chef_server']['user']['username']
     retries 10
   end
@@ -101,6 +127,14 @@ if node['chef_server']['bootstrap']['enable']
   execute "/opt/chef-server/embedded/bin/rabbitmqctl set_permissions -p #{node['chef_server']['rabbitmq']['vhost']} #{node['chef_server']['rabbitmq']['user']} \".*\" \".*\" \".*\"" do
     user node['chef_server']['user']['username']
     not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl list_user_permissions #{node['chef_server']['rabbitmq']['user']}|grep #{node['chef_server']['rabbitmq']['vhost']}"
+    retries 10
+  end
+
+  # grant the mapper user the ability to do anything with the /chef vhost
+  # the three regex's map to config, write, read permissions respectively
+  execute "/opt/chef-server/embedded/bin/rabbitmqctl set_permissions -p #{node['chef_server']['rabbitmq']['vhost1']} #{node['chef_server']['rabbitmq']['user1']} \".*\" \".*\" \".*\"" do
+    user node['chef_server']['user']['username']
+    not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl list_user_permissions #{node['chef_server']['rabbitmq']['user1']}|grep #{node['chef_server']['rabbitmq']['vhost1']}"
     retries 10
   end
 end
