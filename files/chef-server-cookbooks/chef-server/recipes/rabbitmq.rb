@@ -37,17 +37,20 @@ end
 rabbitmq_service_dir = "/opt/chef-server/embedded/service/rabbitmq"
 
 cookbook_file "/opt/chef-server/embedded/service/rabbitmq/sbin/rabbitmqadmin" do
-  backup true
+  backup 1
+  mode 0755
   source "rabbitmqadmin"
 end
 
 cookbook_file "/opt/chef-server/embedded/service/rabbitmq/sbin/rabbitmq-server" do
-  backup true
+  backup 1
+  mode 0755
   source "rabbitmq-server"
 end
 
 cookbook_file "/opt/chef-server/embedded/service/rabbitmq/sbin/rabbitmq-plugins" do
-  backup true
+  backup 1
+  mode 0755
   source "rabbitmq-plugins"
 end
 ######################################################################
@@ -62,7 +65,6 @@ end
 end
 
 config_file = File.join(node['chef_server']['rabbitmq']['dir'], "etc", "rabbitmq.conf")
-plugin_file = File.join(node['chef_server']['rabbitmq']['dir'], "etc", "enabled_plugins")
 
 template "#{rabbitmq_service_dir}/sbin/rabbitmq-env" do
   owner "root"
@@ -80,14 +82,6 @@ template config_file do
   variables(node['chef_server']['rabbitmq'].to_hash)
 end
 
-template plugin_file  do
-  source "enabled_plugins.erb"
-  owner "root"
-  group "root"
-  mode "0644"
-  variables(node['chef_server']['rabbitmq'].to_hash)
-end
-
 runit_service "rabbitmq" do
   down node['chef_server']['rabbitmq']['ha']
   options({
@@ -96,27 +90,39 @@ runit_service "rabbitmq" do
 end
 
 if node['chef_server']['bootstrap']['enable']
-	execute "/opt/chef-server/bin/chef-server-ctl start rabbitmq" do
-		retries 20
-	end
+
+  execute "/opt/chef-server/embedded/bin/rabbitmq-plugins enable rabbitmq_stomp rabbitmq_management" do
+    not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmq-plugins list | grep -e \"\[E\] rabbitmq_management\" -e \"\[E\] rabbitmq_stomp\""
+    user node['chef_server']['user']['username']
+    retries 10
+  end
+
+  execute "/opt/chef-server/bin/chef-server-ctl restart rabbitmq" do
+    retries 20
+  end
 
   execute "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl wait /var/opt/chef-server/rabbitmq/db/rabbit@localhost.pid" do
     retries 10
   end
 
-  [ node['chef_server']['rabbitmq']['vhost'],node['chef_server']['rabbitmq']['vhost1'],node['chef_server']['rabbitmq']['vhost2'] ].each do |vhost|
-    execute "/opt/chef-server/embedded/bin/rabbitmqctl add_vhost #{vhost}" do
-      user node['chef_server']['user']['username']
-      not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl list_vhosts| grep #{vhost}"
-      retries 20
-    end
+  execute "/opt/chef-server/embedded/bin/rabbitmqctl add_vhost #{node["chef_server"]["rabbitmq"]["vhost"]}" do
+    user node['chef_server']['user']['username']
+    not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl list_vhosts| grep #{node["chef_server"]["rabbitmq"]["vhost"]}"
+    retries 20
   end
 
-  execute "/opt/chef-server/embedded/bin/rabbitmq-plugins enable rabbitmq_stomp rabbitmq_management" do
-    not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmq-plugins list | grep -e "\[E\] rabbitmq_management" -e "\[E\] rabbitmq_stomp""
+  execute "/opt/chef-server/embedded/bin/rabbitmqctl add_vhost #{node["chef_server"]["rabbitmq"]["vhost1"]}" do
     user node['chef_server']['user']['username']
-    retries 10
+    not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl list_vhosts| grep #{node["chef_server"]["rabbitmq"]["vhost1"]}"
+    retries 20
   end
+
+  execute "/opt/chef-server/embedded/bin/rabbitmqctl add_vhost #{node["chef_server"]["rabbitmq"]["vhost2"]}" do
+    user node['chef_server']['user']['username']
+    not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl list_vhosts| grep #{node["chef_server"]["rabbitmq"]["vhost2"]}"
+    retries 20
+  end
+
 
   execute "/opt/chef-server/embedded/bin/rabbitmqctl add_user #{node['chef_server']['rabbitmq']['user2']} #{node['chef_server']['rabbitmq']['password2']}" do
     not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl list_users |grep #{node['chef_server']['rabbitmq']['user2']}"

@@ -5,7 +5,7 @@ identity = <%= @node['fqdn'] %>
 libdir = /opt/chef-server/embedded/service/mcollective/plugins
 logfile = <%= node['chef_server']['mcollective']['log_directory'] %>/server.log
 loglevel = info
-daemonize = 1
+daemonize = 0
 
 # Plugins
 securityprovider = psk

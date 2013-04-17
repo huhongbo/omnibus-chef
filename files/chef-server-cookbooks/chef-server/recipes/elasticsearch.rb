@@ -45,6 +45,10 @@ directory "/opt/chef-server/embedded/service/elasticsearch" do
   recursive true
 end
 
+execute "chown -R dntmon:root /opt/chef-server/embedded/service/elasticsearch" do
+  retries 20
+end
+
 link elasticsearch_data_dir_symlink do
   to elasticsearch_data_dir
   not_if { elasticsearch_data_dir == elasticsearch_data_dir_symlink }

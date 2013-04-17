@@ -1,20 +1,18 @@
 input {
-  <% if node['chef-server']['logstash']['inputs'].empty? -%>
+  <% if node['chef_server']['logstash']['inputs'].empty? -%>
   tcp {
     type => "tcp-input"
     port => "5959"
     format => "json_event"
   }
   <% else -%>
-    <%= LogstashConf.section_to_str(node['chef-server']['logstash']['inputs']) %>
+    <%= LogstashConf.section_to_str(node['chef_server']['logstash']['inputs']) %>
   <% end -%>
 }
 
-<% unless node['chef-server']['logstash']['filters'].empty? -%>
 filter {
-  <%= LogstashConf.section_to_str(node['logstash']['server']['filters'], node['logstash']['server']['version'], @patterns_dir) %>
 }
-<% end -%>
 
 output {
+  stdout { debug => true }
 }

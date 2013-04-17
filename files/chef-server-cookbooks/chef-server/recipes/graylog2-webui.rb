@@ -41,6 +41,10 @@ directory "/opt/chef-server/embedded/service/graylog2-webui" do
   recursive true
 end
 
+execute "chown -R dntmon:root /opt/chef-server/embedded/service/graylog2-webui" do
+  retries 20
+end
+
 should_notify = OmnibusHelper.should_notify?("graylog2-webui")
 config_ru = File.join(graylog2_webui_etc_dir, "config.ru")
 
@@ -69,9 +73,8 @@ link "/opt/chef-server/embedded/service/graylog2-webui/tmp" do
   to graylog2_webui_tmp_dir
 end
 
-execute "add unicorn to Gemfile" do
-  command "echo "gem 'unicorn'" >>/opt/chef-server/embedded/service/graylog2-webui/Gemfile"
-  action :nothing
+execute "echo \"gem 'unicorn'\" >>/opt/chef-server/embedded/service/graylog2-webui/Gemfile" do
+  retries 10
 end
 
 execute "chown -R #{node['chef_server']['user']['username1']} /opt/chef-server/embedded/service/graylog2-webui/public"
