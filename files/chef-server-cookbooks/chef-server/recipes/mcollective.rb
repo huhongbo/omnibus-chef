@@ -33,8 +33,8 @@ mcollective_log_dir = node['chef_server']['mcollective']['log_directory']
 end
 
 directory "/opt/chef-server/embedded/service/mcollective" do
-  owner root
-  group root
+  owner 'root'
+  group 'root'
   mode '0755'
   recursive true
 end

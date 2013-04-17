@@ -3,7 +3,7 @@
 is_master = true
 
 # Set plugin directory here (relative or absolute)
-plugin_dir = plugin
+plugin_dir = /opt/chef-server/embedded/service/graylog2/plugin
 
 # On which port (UDP) should we listen for Syslog messages? (Standard: 514)
 syslog_listen_port = 514
@@ -21,7 +21,7 @@ udp_recvbuffer_sizes = 1048576
 # Embedded elasticsearch configuration file
 # pay attention to the working directory of the server, maybe use an absolute path here
 elasticsearch_config_file = <%= node['chef_server']['graylog2']['dir'] %>/etc/graylog2-elasticsearch.yml
-elasticsearch_max_docs_per_index = 60000000
+elasticsearch_max_docs_per_index = 60000
 
 elasticsearch_index_prefix = graylog2
 
@@ -41,7 +41,7 @@ elasticsearch_replicas = 0
 elasticsearch_analyzer = ik_smart
 
 # How many minutes of messages do you want to keep in the recent index? This index lives in memory only and is used to build the overview and stream pages. Raise this value if you want to see more messages in the overview pages. This is not affecting for example searches which are always targeting *all* indices.
-recent_index_ttl_minutes = 1440
+recent_index_ttl_minutes = 60
 
 # Storage type of recent index. Allowed values: niofs, simplefs, mmapfs, memory
 # Standard: niofs - Set to memory for best speed but keep in mind that the whole recent index has to fit into the memory of your ElasticSearch machines. Set recent_index_ttl_minutes to a reasonable amount that will let the messages fit into memory.
@@ -75,7 +75,7 @@ outputbuffer_processors = 5
 #     High throughput, low latency, higher CPU usage.
 #  - busy_spinning
 #     Avoids syscalls which could introduce latency jitter. Best when threads can be bound to specific CPU cores.
-processor_wait_strategy = sleeping
+processor_wait_strategy = blocking
 
 # Size of internal ring buffers. Raise this if raising outputbuffer_processors does not help anymore.
 # For optimum performance your LogMessage objects in the ring buffer should fit in your CPU L3 cache.
@@ -84,7 +84,7 @@ processor_wait_strategy = sleeping
 ring_size = 1024
 
 # MongoDB Configuration
-mongodb_useauth = true
+mongodb_useauth = false
 #mongodb_user = grayloguser
 #mongodb_password = Passw0rd
 mongodb_host = 127.0.0.1

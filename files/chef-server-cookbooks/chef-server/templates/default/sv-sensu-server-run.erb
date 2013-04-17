@@ -6,7 +6,7 @@ CONFIG_DIR=/etc/sensu/conf.d
 EXTENSION_DIR=/etc/sensu/extensions
 PLUGINS_DIR=/etc/sensu/plugins
 HANDLERS_DIR=/etc/sensu/handlers
-LOG_DIR= <%= default['chef_server']['sensu']['log_directory'] %>
+LOG_DIR=<%= node['chef_server']['sensu']['log_directory'] %>
 
 if [ -f /etc/default/sensu ]; then
     . /etc/default/sensu

@@ -48,6 +48,9 @@ default['chef_server']['rabbitmq']['password'] = 'chefrocks'
 default['chef_server']['rabbitmq']['vhost1'] = '/sensu'
 default['chef_server']['rabbitmq']['user1'] = 'sensu'
 default['chef_server']['rabbitmq']['password1'] = 'Passw0rd'
+default['chef_server']['rabbitmq']['vhost2'] = '/mcollective'
+default['chef_server']['rabbitmq']['user2'] = 'mcollective'
+default['chef_server']['rabbitmq']['password2'] = 'Passw0rd'
 default['chef_server']['rabbitmq']['node_ip_address'] = '0.0.0.0'
 default['chef_server']['rabbitmq']['node_port'] = '5672'
 default['chef_server']['rabbitmq']['nodename'] = 'rabbit@localhost'
@@ -302,6 +305,9 @@ default['chef_server']['redis']['log_directory'] = "/var/log/dntmon/redis"
 default['chef_server']['sensu']['enable'] = true
 default['chef_server']['sensu']['ha'] = false
 default['chef_server']['sensu']['log_directory'] = "/var/log/dntmon/sensu"
+default['chef_server']['sensu']['server_log'] = "/var/log/dntmon/sensu_server"
+default['chef_server']['sensu']['client_log'] = "/var/log/dntmon/sensu_client"
+default['chef_server']['sensu']['dashboard_log'] = "/var/log/dntmon/sensu_dashboard"
 
 ####
 # Mongodb
@@ -341,11 +347,12 @@ default['chef_server']['elasticsearch']['log_directory'] = "/var/log/dntmon/elas
 default['chef_server']['logstash']['enable'] = true
 default['chef_server']['logstash']['ha'] = false
 default['chef_server']['logstash']['dir'] = "/var/opt/chef-server/logstash"
-default['chef-server']['logstash']['xms'] = "128m"
-default['chef-server']['logstash']['enable_embedded_es'] = true
-default['chef-server']['logstash']['inputs'] = []
-default['chef-server']['logstash']['filters'] = []
-default['chef-server']['logstash']['outputs'] = []
+default['chef_server']['logstash']['xms'] = "128m"
+default['chef_server']['logstash']['xmx'] = "128m"
+default['chef_server']['logstash']['enable_embedded_es'] = true
+default['chef_server']['logstash']['inputs'] = []
+default['chef_server']['logstash']['filters'] = []
+default['chef_server']['logstash']['outputs'] = []
 default['chef_server']['logstash']['log_directory'] = "/var/log/dntmon/logstash"
 
 ####
@@ -354,8 +361,9 @@ default['chef_server']['logstash']['log_directory'] = "/var/log/dntmon/logstash"
 default['chef_server']['graylog2']['enable'] = true
 default['chef_server']['graylog2']['ha'] = false
 default['chef_server']['graylog2']['dir'] = "/var/opt/chef-server/graylog2"
-default['chef-server']['graylog2']['xms'] = "128m"
-default['chef-server']['graylog2']['nodename'] = "graylog1"
+default['chef_server']['graylog2']['xms'] = "128m"
+default['chef_server']['graylog2']['xmx'] = "128m"
+default['chef_server']['graylog2']['nodename'] = "graylog1"
 default['chef_server']['graylog2']['log_directory'] = "/var/log/dntmon/graylog2"
 
 
@@ -365,11 +373,11 @@ default['chef_server']['graylog2']['log_directory'] = "/var/log/dntmon/graylog2"
 default['chef_server']['graylog2-webui']['enable'] = true
 default['chef_server']['graylog2-webui']['ha'] = false
 default['chef_server']['graylog2-webui']['dir'] = "/var/opt/chef-server/graylog2"
-default['chef-server']['graylog2-webui']['nodename'] = "graylog1"
-default['chef_server']['graylog2-webui']['log_directory'] = "/var/log/dntmon/graylog2"
+default['chef_server']['graylog2-webui']['nodename'] = "graylog1"
+default['chef_server']['graylog2-webui']['log_directory'] = "/var/log/dntmon/graylog2-webui"
 default['chef_server']['graylog2-webui']['listen'] = '127.0.0.1'
 default['chef_server']['graylog2-webui']['vip'] = '127.0.0.1'
-default['chef_server']['graylog2-webui']['port'] = 9462
+default['chef_server']['graylog2-webui']['port'] = 9662
 default['chef_server']['graylog2-webui']['backlog'] = 1024
 default['chef_server']['graylog2-webui']['tcp_nodelay'] = true
 default['chef_server']['graylog2-webui']['worker_timeout'] = 3600
@@ -383,8 +391,4 @@ default['chef_server']['graylog2-webui']['environment'] = 'production'
 default['chef_server']['mcollective']['enable'] = true
 default['chef_server']['mcollective']['ha'] = false
 default['chef_server']['mcollective']['dir'] = "/var/opt/chef-server/mcollective"
-default['chef-server']['mcollective']['stomp']['hostname'] = "127.0.0.1"
-default['chef-server']['mcollective']['stomp']['port'] = "6163"
-default['chef-server']['mcollective']['stomp']['username'] = "mcollective"
-default['chef-server']['mcollective']['stomp']['password'] = "Passw0rd"
 default['chef_server']['mcollective']['log_directory'] = "/var/log/dntmon/mcollective"

@@ -56,6 +56,7 @@ deps << "elasticsearch"
 deps << "graylog2"
 deps << "graylog2-webui"
 deps << "mongodb"
+deps << "logstash"
 
 #mcollective services
 deps << "stomp"

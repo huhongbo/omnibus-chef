@@ -39,8 +39,8 @@ elasticsearch_work_dir = File.join(elasticsearch_dir, "work")
 end
 
 directory "/opt/chef-server/embedded/service/elasticsearch" do
-  owner root
-  group root
+  owner 'dntmon'
+  group 'root'
   mode '0755'
   recursive true
 end

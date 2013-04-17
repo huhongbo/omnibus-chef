@@ -28,12 +28,18 @@ sensu_extent_dir = File.join(sensu_dir, "extensions")
 sensu_plugin_dir = File.join(sensu_dir, "plugins")
 sensu_handler_dir = File.join(sensu_dir, "handlers")
 sensu_log_dir = node['chef_server']['sensu']['log_directory']
+sensu_server_log_dir = node['chef_server']['sensu']['server_log']
+sensu_client_log_dir = node['chef_server']['sensu']['client_log']
+sensu_dashboard_log_dir = node['chef_server']['sensu']['dashboard_log']
 [
   sensu_conf_dir,
   sensu_extent_dir,
   sensu_plugin_dir,
   sensu_handler_dir,
-  sensu_log_dir
+  sensu_log_dir,
+  sensu_server_log_dir,
+  sensu_client_log_dir,
+  sensu_dashboard_log_dir
 ].each do |dir_name|
   directory dir_name do
     owner node['chef_server']['user']['username1']
@@ -43,12 +49,20 @@ sensu_log_dir = node['chef_server']['sensu']['log_directory']
 end
 
 sensu_config = File.join(sensu_dir, "config.json")
+sensu_client_config = File.join(sensu_dir, "conf.d", "config.json")
 
 template sensu_config do
   source "config.json.erb"
   mode "644"
   variables(node['chef_server']['sensu'].to_hash)
-  notifies :restart, 'service[sensu]' if OmnibusHelper.should_notify?("sensu")
+  notifies :restart, 'service[sensu-server]' if OmnibusHelper.should_notify?("sensu")
+end
+
+template sensu_client_config do
+  source "client.json.erb"
+  mode "644"
+  variables(node['chef_server']['sensu'].to_hash)
+  notifies :restart, 'service[sensu-client]' if OmnibusHelper.should_notify?("sensu")
 end
 
 [

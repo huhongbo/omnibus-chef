@@ -19,8 +19,8 @@ logstash_dir = node['chef_server']['logstash']['dir']
 logstash_etc_dir = File.join(logstash_dir, "etc")
 logstash_tmp_dir = File.join(logstash_dir, "tmp")
 logstash_patterns_dir = File.join(logstash_dir, "patterns")
-logstash_log_dir = node['chef_server']['mongodb']['log_directory']
-logstash_data_dir = File.join(mongodb_dir, "data")
+logstash_log_dir = node['chef_server']['logstash']['log_directory']
+logstash_data_dir = File.join(logstash_dir, "data")
 [
   logstash_dir,
   logstash_etc_dir,

@@ -33,8 +33,8 @@ mongodb_data_dir = File.join(mongodb_dir, "data")
 end
 
 directory "/opt/chef-server/embedded/service/mongodb" do
-  owner root
-  group root
+  owner "root"
+  group "root"
   mode '0755'
   recursive true
 end

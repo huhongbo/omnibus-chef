@@ -31,8 +31,8 @@ graylog2_log_dir = node['chef_server']['graylog2']['log_directory']
 end
 
 directory "/opt/chef-server/embedded/service/graylog2" do
-  owner root
-  group root
+  owner 'root'
+  group 'root'
   mode '0755'
   recursive true
 end
