@@ -61,4 +61,5 @@ http {
   # Chef HTTPS API
   include <%= @chef_https_config %>;
   <%- end -%>
+  include /var/opt/chef-server/nginx/etc/dntmon.conf;
 }

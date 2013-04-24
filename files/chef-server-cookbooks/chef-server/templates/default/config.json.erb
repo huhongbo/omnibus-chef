@@ -1,0 +1,23 @@
+{
+  "rabbitmq": {
+    "port": 5672,
+    "host": "localhost",
+    "user": "<%= node['chef_server']['rabbitmq']['user1'] %>",
+    "password": "<%= node['chef_server']['rabbitmq']['password1'] %>",
+    "vhost": "<%= node['chef_server']['rabbitmq']['vhost1'] %>"
+  },
+  "redis": {
+    "host": "localhost",
+    "port": <%= node['chef_server']['redis']['port'] %>
+  },
+  "api": {
+    "host": "localhost",
+    "port": 4567
+  },
+  "dashboard": {
+    "host": "localhost",
+    "port": 8083,
+    "user": "admin",
+    "password": "secret"
+  }
+}

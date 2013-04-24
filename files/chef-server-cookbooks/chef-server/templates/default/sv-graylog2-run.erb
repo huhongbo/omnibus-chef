@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Force all stderr to stdout
+exec 2>&1
+GRAYLOG2_SERVER_JAR=graylog2-server.jar
+GRAYLOG2_CONF=/var/opt/chef-server/graylog2/etc/graylog2.conf
+LOG_FILE=<%= node['chef_server']['graylog2']['log_directory'] %>/graylog2.log
+export JAVA_HOME=/opt/chef-server/embedded/jre
+# bump the # of open files way way up
+ulimit -n 65536
+
+ulimit -a
+
+# Force the heap size
+MIN_MEM=<%= node['chef_server']['graylog2']['xms'] %>
+MAX_MEM=<%= node['chef_server']['graylog2']['xmx'] %>
+JAVA_OPTS="-Xms$MIN_MEM -Xmx$MAX_MEM"
+
+exec chpst -P -U <%= node['chef_server']['user']['username1'] %> -u <%= node['chef_server']['user']['username1'] %> /usr/bin/env PATH=/opt/chef-server/embedded/bin:/opt/chef-server/bin:/opt/chef-server/embedded/jre/bin:$PATH JAVA_HOME=/opt/chef-server/embedded/jre java $JAVA_OPTS -jar /opt/chef-server/embedded/service/graylog2/graylog2-server.jar -f $GRAYLOG2_CONF

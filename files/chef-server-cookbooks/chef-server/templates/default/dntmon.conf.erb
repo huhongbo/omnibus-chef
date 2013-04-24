@@ -1,0 +1,130 @@
+    client_max_body_size 64m;
+    proxy_connect_timeout 300;
+    proxy_read_timeout 120;
+    proxy_send_timeout 120;
+    proxy_buffer_size 256k;
+    proxy_buffers 8 256k;
+    proxy_busy_buffers_size 256k;
+    proxy_temp_file_write_size 256k;
+    proxy_cache_path /var/opt/chef-server/nginx/cache levels=1:2 keys_zone=cache_one:200m inactive=1d max_size=200m;
+
+    upstream graylog2_web {
+	     server 127.0.0.1:<%= node['chef_server']['graylog2-webui']['port'] %>;
+    }
+
+    upstream rabbitmq_web {
+      server 127.0.0.1:55672;
+    }
+
+    upstream sensu_web {
+      server 127.0.0.1:8083;
+    }
+
+    upstream infoboard_web {
+      server 127.0.0.1:<%= node['chef_server']['infoboard']['port'] %>;
+    }
+
+    upstream uwsgi_app1_proxy {
+      server unix:///tmp/app1.sock fail_timeout=0s;
+    }
+
+    upstream uwsgi_app2_proxy {
+      server unix:///tmp/app2.sock fail_timeout=0s;
+    }
+
+    upstream gdash_web {
+      server 127.0.0.1:<%= node['chef_server']['gdash']['port'] %>;
+    }
+
+    upstream geminabox {
+      server 127.0.0.1:<%= node['chef_server']['geminabox']['port'] %>;
+    }
+
+    server {
+      listen 80;
+      server_name <%= node['chef_server']['nginx']['gem_dns'] %>;
+      location / {
+        proxy_pass http://geminabox;
+      }
+    }
+
+    server {
+      listen 80;
+      server_name <%= node['chef_server']['nginx']['rabbitmq_dns'] %>;
+      location / {
+        proxy_pass http://rabbitmq_web;
+      }
+    }
+
+    server {
+      listen 80;
+      server_name <%= node['chef_server']['nginx']['graylog2_dns'] %>;
+      location / {
+        proxy_pass http://graylog2_web;
+      }
+    }
+
+    server {
+      listen 80;
+      server_name <%= node['chef_server']['nginx']['sensu_dns'] %>;
+      location / {
+        proxy_pass http://sensu_web;
+      }
+    }
+
+    server {
+      listen   80;
+      server_name <%= node['chef_server']['nginx']['graphite1_dns'] %>;
+      root /opt/graphite/webapp;
+      location / {
+        uwsgi_pass uwsgi_app1_proxy;
+        include uwsgi_params;
+        rewrite ^/graphite/$ last;
+        access_log   off;
+      }
+      location ~ /content/ {
+        rewrite ^/content/$ last;
+      }
+    }
+
+    server {
+      listen   80;
+      server_name <%= node['chef_server']['nginx']['graphite2_dns'] %>;
+      root /opt/graphite/webapp;
+      location / {
+        uwsgi_pass uwsgi_app2_proxy;
+        include uwsgi_params;
+        rewrite ^/graphite/$ last;
+        access_log   off;
+      }
+      location ~ /content/ {
+        rewrite ^/content/$ last;
+      }
+    }
+
+    server {
+      listen 80;
+      server_name <%= node['chef_server']['nginx']['gdash_dns'] %>;
+      location / {
+        proxy_pass http://gdash_web;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        access_log   off;
+      }
+    }
+
+    server {
+      listen 80;
+      server_name <%= node['chef_server']['nginx']['infoboard_dns'] %>;
+      location / {
+        proxy_pass http://infoboard_web;
+	      proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        access_log   off;
+      }
+      location ~ ^/files/(.*)$ {
+        alias <%= File.join(node['chef_server']['nginx']['dir'], "files") %>/$1;
+      }
+    }

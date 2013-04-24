@@ -1,0 +1,27 @@
+topicprefix = /topic/
+main_collective = mcollective
+collectives = mcollective
+identity = <%= @node['fqdn'] %>
+libdir = /opt/chef-server/embedded/service/mcollective/plugins
+logfile = <%= node['chef_server']['mcollective']['log_directory'] %>/client.log
+loglevel = info
+daemonize = 1
+
+# Plugins
+securityprovider = psk
+plugin.psk = unset
+
+connector = rabbitmq
+plugin.rabbitmq.vhost = <%= node['chef_server']['rabbitmq']['vhost2'] %>
+plugin.rabbitmq.pool.size = 1
+plugin.rabbitmq.pool.1.host = 127.0.0.1
+plugin.rabbitmq.pool.1.port = 61613
+plugin.rabbitmq.pool.1.user = <%= node['chef_server']['rabbitmq']['user2'] %>
+plugin.rabbitmq.pool.1.password = <%= node['chef_server']['rabbitmq']['password2'] %>
+
+# Facts
+factsource = yaml
+plugin.yaml = /etc/mcollective/facts.yaml
+
+# Classes
+classesfile = /var/tmp/chefnode.txt

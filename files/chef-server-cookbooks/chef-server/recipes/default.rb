@@ -71,7 +71,19 @@ include_recipe "runit"
   "erchef",
   "bootstrap",
   "chef-server-webui",
-  "nginx"
+  "nginx",
+  "dntmon",
+  "redis",
+  "sensu",
+  "mongodb",
+  "elasticsearch",
+  "logstash",
+  "graylog2",
+  "graylog2-webui",
+  "gdash",
+  "geminabox",
+  "mcollective",
+  "info-dashboard"
 ].each do |service|
   if node["chef_server"][service]["enable"]
     include_recipe "chef-server::#{service}"

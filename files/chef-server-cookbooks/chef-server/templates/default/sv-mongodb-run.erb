@@ -1,0 +1,4 @@
+#!/bin/sh
+
+exec 2>&1
+exec chpst -U <%= node['chef_server']['user']['username1'] %> -u <%= node['chef_server']['user']['username1'] %>  /opt/chef-server/embedded/bin/mongod --config <%= File.join(node['chef_server']['mongodb']['dir'], "etc", "mongod.conf") %>
