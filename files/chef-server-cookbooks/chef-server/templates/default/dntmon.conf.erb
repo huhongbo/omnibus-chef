@@ -21,7 +21,7 @@
     }
 
     upstream infoboard_web {
-      server 127.0.0.1:<%= node['chef_server']['infoboard']['port'] %>;
+      server 127.0.0.1:<%= node['chef_server']['info-dashboard']['port'] %>;
     }
 
     upstream uwsgi_app1_proxy {

@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 
+graylog2_gemfile = "/opt/chef-server/embedded/service/graylog2-webui/Gemfile"
 graylog2_webui_dir = node['chef_server']['graylog2-webui']['dir']
 graylog2_webui_etc_dir = File.join(graylog2_webui_dir, "etc")
 graylog2_webui_working_dir = File.join(graylog2_webui_dir, "working")
@@ -73,7 +74,8 @@ link "/opt/chef-server/embedded/service/graylog2-webui/tmp" do
   to graylog2_webui_tmp_dir
 end
 
-execute "echo \"gem 'unicorn'\" >>/opt/chef-server/embedded/service/graylog2-webui/Gemfile" do
+execute "echo \"gem 'unicorn'\" >>#{graylog2_gemfile}" do
+  not_if graylog2_gemfile.include?("unicorn")
   retries 10
 end
 

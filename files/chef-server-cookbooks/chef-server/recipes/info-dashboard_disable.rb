@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-runit_service "infoboard" do
+runit_service "info-dashboard" do
   action :disable
 end
 

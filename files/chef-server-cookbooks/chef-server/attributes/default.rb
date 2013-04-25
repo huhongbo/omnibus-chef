@@ -427,24 +427,24 @@ default['chef_server']['geminabox']['tcp_nodelay'] = true
 default['chef_server']['geminabox']['worker_timeout'] = 3600
 default['chef_server']['geminabox']['umask'] = "0022"
 default['chef_server']['geminabox']['worker_processes'] = 1
-default['chef_server']['geminaobx']['environment'] = 'production'
+default['chef_server']['geminabox']['environment'] = 'production'
 
 ####
 # Infoboard
 ####
-default['chef_server']['infoboard']['enable'] = true
-default['chef_server']['infoboard']['ha'] = false
-default['chef_server']['infoboard']['dir'] = "/var/opt/chef-server/info-dashboard"
-default['chef_server']['infoboard']['log_directory'] = "/var/log/dntmon/info-dashboard"
-default['chef_server']['infoboard']['listen'] = '0.0.0.0'
-default['chef_server']['infoboard']['vip'] = '127.0.0.1'
-default['chef_server']['infoboard']['port'] = 8010
-default['chef_server']['infoboard']['backlog'] = 1024
-default['chef_server']['infoboard']['tcp_nodelay'] = true
-default['chef_server']['infoboard']['worker_timeout'] = 3600
-default['chef_server']['infoboard']['umask'] = "0022"
-default['chef_server']['infoboard']['worker_processes'] = 4
-default['chef_server']['geminaobx']['environment'] = 'production'
+default['chef_server']['info-dashboard']['enable'] = true
+default['chef_server']['info-dashboard']['ha'] = false
+default['chef_server']['info-dashboard']['dir'] = "/var/opt/chef-server/info-dashboard"
+default['chef_server']['info-dashboard']['log_directory'] = "/var/log/dntmon/info-dashboard"
+default['chef_server']['info-dashboard']['listen'] = '0.0.0.0'
+default['chef_server']['info-dashboard']['vip'] = '127.0.0.1'
+default['chef_server']['info-dashboard']['port'] = 8010
+default['chef_server']['info-dashboard']['backlog'] = 1024
+default['chef_server']['info-dashboard']['tcp_nodelay'] = true
+default['chef_server']['info-dashboard']['worker_timeout'] = 3600
+default['chef_server']['info-dashboard']['umask'] = "0022"
+default['chef_server']['info-dashboard']['worker_processes'] = 4
+default['chef_server']['info-dashboard']['environment'] = 'production'
 
 ####
 # Other

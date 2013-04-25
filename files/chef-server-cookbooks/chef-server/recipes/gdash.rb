@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 
+gdash_gemfile = "/opt/chef-server/embedded/service/gdash/Gemfile"
 gdash_dir = node['chef_server']['gdash']['dir']
 gdash_etc_dir = File.join(gdash_dir, "etc")
 gdash_working_dir = File.join(gdash_dir, "working")
@@ -60,8 +61,15 @@ unicorn_config File.join(gdash_etc_dir, "unicorn.rb") do
   notifies :restart, 'service[gdash]' if should_notify
 end
 
-execute "echo \"gem 'unicorn'\" >>/opt/chef-server/embedded/service/gdash/Gemfile" do
+execute "echo \"gem 'unicorn'\" >>#{gdash_gemfile}" do
+  not_if gdash_gemfile.include?("unicorn")
   retries 10
+end
+
+template "/opt/chef-server/embedded/service/gdash/config/gdash.yaml" do
+  source "gdash.yaml.erb"
+  mode "644"
+  notifies :restart, 'service[gdash]' if OmnibusHelper.should_notify?("gdash")
 end
 
 runit_service "gdash" do

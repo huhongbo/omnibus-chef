@@ -15,10 +15,10 @@
 # limitations under the License.
 #
 
-infoboard_dir = node['chef_server']['infoboard']['dir']
+infoboard_dir = node['chef_server']['info-dashboard']['dir']
 infoboard_etc_dir = File.join(infoboard_dir, "etc")
-gdash_working_dir = File.join(infoboard_dir, "working")
-infoboard_log_dir = node['chef_server']['infoboard']['log_directory']
+infoboard_working_dir = File.join(infoboard_dir, "working")
+infoboard_log_dir = node['chef_server']['info-dashboard']['log_directory']
 [
   infoboard_dir,
   infoboard_etc_dir,
@@ -32,36 +32,36 @@ infoboard_log_dir = node['chef_server']['infoboard']['log_directory']
   end
 end
 
-should_notify = OmnibusHelper.should_notify?("infoboard")
+should_notify = OmnibusHelper.should_notify?("info-dashboard")
 config_ru = File.join(infoboard_etc_dir, "config.ru")
 
 link config_ru do
   to "/opt/chef-server/embedded/service/info-dashboard/config.ru"
 end
 
-unicorn_listen = node['chef_server']['infoboard']['listen']
-unicorn_listen << ":#{node['chef_server']['infoboard']['port']}"
+unicorn_listen = node['chef_server']['info-dashboard']['listen']
+unicorn_listen << ":#{node['chef_server']['info-dashboard']['port']}"
 
 unicorn_config File.join(infoboard_etc_dir, "unicorn.rb") do
   listen unicorn_listen => {
-    :backlog => node['chef_server']['infoboard']['backlog'],
-    :tcp_nodelay => node['chef_server']['infoboard']['tcp_nodelay']
+    :backlog => node['chef_server']['info-dashboard']['backlog'],
+    :tcp_nodelay => node['chef_server']['info-dashboard']['tcp_nodelay']
   }
-  worker_timeout node['chef_server']['infoboard']['worker_timeout']
+  worker_timeout node['chef_server']['info-dashboard']['worker_timeout']
   working_directory infoboard_working_dir
-  worker_processes node['chef_server']['infoboard']['worker_processes']
+  worker_processes node['chef_server']['info-dashboard']['worker_processes']
   owner "root"
   group "root"
   mode "0644"
-  notifies :restart, 'service[infoboard]' if should_notify
+  notifies :restart, 'service[info-dashboard]' if should_notify
 end
 
 execute "echo \"gem 'unicorn'\" >>/opt/chef-server/embedded/service/info-dashboard/Gemfile" do
   retries 10
 end
 
-runit_service "infoboard" do
-  down node['chef_server']['infoboard']['ha']
+runit_service "info-dashboard" do
+  down node['chef_server']['info-dashboard']['ha']
   options({
     :log_directory => infoboard_log_dir,
   }.merge(params))
