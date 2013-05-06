@@ -99,6 +99,11 @@ if node['chef_server']['bootstrap']['enable']
     retries 10
   end
 
+  execute "/opt/chef-server/embedded/bin/rabbitmqctl set_user_tags #{node['chef_server']['rabbitmq']['user1']} administrator" do
+    user node['chef_server']['user']['username']
+    retries 10
+  end
+
   execute "/opt/chef-server/embedded/bin/rabbitmqctl set_permissions -p #{node['chef_server']['rabbitmq']['vhost2']} #{node['chef_server']['rabbitmq']['user2']} \".*\" \".*\" \".*\"" do
     user node['chef_server']['user']['username']
     not_if "/opt/chef-server/embedded/bin/chpst -u #{node["chef_server"]["user"]["username"]} -U #{node["chef_server"]["user"]["username"]} /opt/chef-server/embedded/bin/rabbitmqctl list_user_permissions #{node['chef_server']['rabbitmq']['user2']}|grep #{node['chef_server']['rabbitmq']['vhost2']}"

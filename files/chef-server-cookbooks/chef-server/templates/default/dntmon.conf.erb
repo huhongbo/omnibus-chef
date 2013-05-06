@@ -75,7 +75,7 @@
     server {
       listen   80;
       server_name <%= node['chef_server']['nginx']['graphite1_dns'] %>;
-      root /opt/graphite/webapp;
+      root /opt/chef-server/embedded/service/graphite/webapp;
       location / {
         uwsgi_pass uwsgi_app1_proxy;
         include uwsgi_params;
@@ -90,7 +90,7 @@
     server {
       listen   80;
       server_name <%= node['chef_server']['nginx']['graphite2_dns'] %>;
-      root /opt/graphite/webapp;
+      root /opt/chef-server/embedded/service/graphite/webapp;
       location / {
         uwsgi_pass uwsgi_app2_proxy;
         include uwsgi_params;
